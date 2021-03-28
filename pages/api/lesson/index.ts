@@ -11,7 +11,11 @@ const handler = nc<Request, NextApiResponse>({
 
 handler.use(middleware)
 handler.post(async (req, res) => {
-  const newLesson = await lesson.createLesson(req.db, { createdBy: req.user.id, name: req.body.name })
+  const newLesson = await lesson.createLesson(req.db, {
+    createdBy: req.user.id,
+    name: req.body.name,
+    course: req.body.course,
+  })
   res.send({ data: newLesson })
 })
 

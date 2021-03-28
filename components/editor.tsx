@@ -1,25 +1,25 @@
-import React, { FC, useState, useEffect, useRef } from 'react'
-import Embed from '@editorjs/embed'
-import Table from '@editorjs/table'
-import List from '@editorjs/list'
-import Warning from '@editorjs/warning'
-import Code from '@editorjs/code'
-import LinkTool from '@editorjs/link'
-import Image from '@editorjs/image'
-import Raw from '@editorjs/raw'
-import Header from '@editorjs/header'
-import Quote from '@editorjs/quote'
-import Marker from '@editorjs/marker'
 import CheckList from '@editorjs/checklist'
+import Code from '@editorjs/code'
 import Delimiter from '@editorjs/delimiter'
-import InlineCode from '@editorjs/inline-code'
-import SimpleImage from '@editorjs/simple-image'
 import EditorJS from '@editorjs/editorjs'
-import { Icon, Pane, Text, TickIcon, Spinner, majorScale } from 'evergreen-ui'
+import Embed from '@editorjs/embed'
+import Header from '@editorjs/header'
+import Image from '@editorjs/image'
+import InlineCode from '@editorjs/inline-code'
+import LinkTool from '@editorjs/link'
+import List from '@editorjs/list'
+import Marker from '@editorjs/marker'
+import Quote from '@editorjs/quote'
+import Raw from '@editorjs/raw'
+import SimpleImage from '@editorjs/simple-image'
+import Table from '@editorjs/table'
+import Warning from '@editorjs/warning'
 import { useThrottleCallback } from '@react-hook/throttle'
+import { Icon, majorScale, Pane, Spinner, Text, TickIcon } from 'evergreen-ui'
+import React, { FC, useEffect, useRef, useState } from 'react'
 
-const saveEditor = async (docId: string, data: any) => {
-  await fetch(`${process.env.NEXT_PUBLIC_API_HOST}/api/doc/${docId}`, {
+const saveEditor = async (screenId: string, data: any) => {
+  await fetch(`${process.env.NEXT_PUBLIC_API_HOST}/api/screen/${screenId}`, {
     method: 'PUT',
     body: JSON.stringify(data),
     headers: {
@@ -46,7 +46,7 @@ const EDITOR_JS_TOOLS = {
   simpleImage: SimpleImage,
 }
 
-const Editor: FC<{ docId: string; content: any }> = ({ content, docId }) => {
+const Editor: FC<{ screenId: string; content: any }> = ({ content, screenId }) => {
   const editor = useRef(null)
   const [saving, setSaving] = useState(false)
   const [doneSaving, setDoneSaving] = useState(false)
@@ -58,7 +58,7 @@ const Editor: FC<{ docId: string; content: any }> = ({ content, docId }) => {
       setSaving(true)
       setDoneSaving(false)
 
-      await saveEditor(docId, { content: data })
+      await saveEditor(screenId, { content: data })
 
       setTimeout(() => {
         setSaving(false)
@@ -77,7 +77,7 @@ const Editor: FC<{ docId: string; content: any }> = ({ content, docId }) => {
       holder: 'editorjs',
       data: content,
       autofocus: true,
-      placeholder: 'Let it be known.',
+      placeholder: 'Let’s do this',
       onChange: save,
     })
 

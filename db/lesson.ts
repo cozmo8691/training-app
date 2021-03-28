@@ -1,7 +1,7 @@
 import { Db } from 'mongodb'
 import { nanoid } from 'nanoid'
 
-export const createLesson = async (db: Db, lesson: { createdBy: string; name: string }) => {
+export const createLesson = async (db: Db, lesson: { createdBy: string; name: string; course: string }) => {
   return db
     .collection('lessons')
     .insertOne({
@@ -13,11 +13,11 @@ export const createLesson = async (db: Db, lesson: { createdBy: string; name: st
 }
 
 // todo: orgId
-export const getLessons = async (db: Db, userId: string) => {
+export const getLessons = async (db: Db, courseId: string) => {
   return db
     .collection('lessons')
     .find({
-      createdBy: userId,
+      course: courseId,
     })
     .toArray()
 }

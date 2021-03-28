@@ -3,8 +3,8 @@ import { Pane, Dialog, majorScale } from 'evergreen-ui'
 import { useRouter } from 'next/router'
 import { getSession, useSession } from 'next-auth/client'
 import Logo from '../components/logo'
-import CourseList from '../components/courseList'
-import NewFolderButton from '../components/newFolderButton'
+import CourseList from '../components/CourseList'
+import NewCourseButton from '../components/newCourseButton'
 import User from '../components/user'
 import NewCourseDialog from '../components/newCourseDialog'
 import { connectToDB, course } from '../db'
@@ -56,6 +56,7 @@ const Profile: FC<{ courses?: any[] }> = ({ courses }) => {
       <Pane width={300} position="absolute" top={0} left={0} background="tint2" height="100vh" borderRight>
         <Pane padding={majorScale(2)} display="flex" alignItems="center" justifyContent="space-between">
           <Logo />
+          <NewCourseButton onClick={() => setIsShown(true)} />
         </Pane>
         <Pane>
           <CourseList courses={allCourses} />

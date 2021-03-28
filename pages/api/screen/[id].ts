@@ -2,7 +2,7 @@ import { NextApiResponse } from 'next'
 import nc from 'next-connect'
 import middleware from '../../../middleware/all'
 import { Request } from '../../../types'
-import { lesson } from '../../../db'
+import { screen } from '../../../db'
 import onError from '../../../middleware/error'
 
 const handler = nc<Request, NextApiResponse>({
@@ -12,7 +12,7 @@ const handler = nc<Request, NextApiResponse>({
 handler.use(middleware)
 
 handler.put(async (req, res) => {
-  const updated = await lesson.updateOne(req.db, req.query.id as string, req.body)
+  const updated = await screen.updateOne(req.db, req.query.id as string, req.body)
 
   res.send({ data: updated })
 })

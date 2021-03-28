@@ -1,6 +1,6 @@
 import { NextApiResponse } from 'next'
 import nc from 'next-connect'
-import { lesson } from '../../../db'
+import { screen } from '../../../db'
 import middleware from '../../../middleware/all'
 import onError from '../../../middleware/error'
 import { Request } from '../../../types'
@@ -11,12 +11,12 @@ const handler = nc<Request, NextApiResponse>({
 
 handler.use(middleware)
 handler.post(async (req, res) => {
-  const newLesson = await lesson.createLesson(req.db, {
+  const newScreen = await screen.createScreen(req.db, {
     createdBy: req.user.id,
-    course: req.body.course,
+    lesson: req.body.lesson,
     name: req.body.name,
   })
-  res.send({ data: newLesson })
+  res.send({ data: newScreen })
 })
 
 export default handler
