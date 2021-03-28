@@ -15,7 +15,7 @@ const Signin = () => {
   // go straight to app
   useEffect(() => {
     if (session) {
-      router.push('/app')
+      router.push('/profile')
     }
   }, [session, router])
 
