@@ -1,6 +1,6 @@
 import NextAuth from 'next-auth'
 import Providers from 'next-auth/providers'
-import { connectToDB, folder, doc, lesson, screen } from '../../../db'
+import { connectToDB, folder, doc, course, lesson, screen } from '../../../db'
 
 export default (req, res) =>
   NextAuth(req, res, {
@@ -52,7 +52,15 @@ export default (req, res) =>
               version: '2.12.4',
             },
           })
-          const defaultLesson = await lesson.createLesson(db, { createdBy: `${user.id}`, name: 'Getting Started' })
+          const defaultCourse = await course.createCourse(db, {
+            name: 'Default course',
+            createdBy: `${user.id}`,
+          })
+          const defaultLesson = await lesson.createLesson(db, {
+            name: 'Getting Started',
+            course: defaultCourse._id,
+            createdBy: `${user.id}`,
+          })
           await screen.createScreen(db, {
             name: 'Start Here',
             lesson: defaultLesson._id,
