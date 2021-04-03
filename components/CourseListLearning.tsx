@@ -8,7 +8,7 @@ const CourseList: FC<{ courses: any[] }> = ({ courses }) => {
     <Pane padding={majorScale(2)}>
       <Menu>
         {courses.map((course) => (
-          <Menu.Item key={course._id} icon={FolderCloseIcon} onClick={() => router.push(`/course/${course._id}`)}>
+          <Menu.Item key={course._id} icon={FolderCloseIcon} onClick={() => router.push(`/learning/${course._id}`)}>
             {course.name}
           </Menu.Item>
         ))}

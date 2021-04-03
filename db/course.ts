@@ -13,11 +13,6 @@ export const createCourse = async (db: Db, course: { createdBy: string; name: st
 }
 
 // todo: orgId
-export const getCourses = async (db: Db, userId: string) => {
-  return db
-    .collection('courses')
-    .find({
-      createdBy: userId,
-    })
-    .toArray()
+export const getCourses = async (db: Db) => {
+  return db.collection('courses').find().toArray()
 }

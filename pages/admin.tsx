@@ -10,7 +10,7 @@ import NewCourseDialog from '../components/newCourseDialog'
 import { connectToDB, course } from '../db'
 import { UserSession } from '../types'
 
-const Profile: FC<{ courses?: any[] }> = ({ courses }) => {
+const Admin: FC<{ courses?: any[] }> = ({ courses }) => {
   const router = useRouter()
   const [session, loading] = useSession()
   const [newCourseIsShown, setIsShown] = useState(false)
@@ -70,7 +70,7 @@ const Profile: FC<{ courses?: any[] }> = ({ courses }) => {
   )
 }
 
-Profile.defaultProps = {
+Admin.defaultProps = {
   courses: [],
 }
 
@@ -95,4 +95,4 @@ export async function getServerSideProps(context) {
   }
 }
 
-export default Profile
+export default Admin

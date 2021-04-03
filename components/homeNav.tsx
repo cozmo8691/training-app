@@ -1,7 +1,7 @@
 import React, { FC } from 'react'
 import { Pane, majorScale, Text, Button } from 'evergreen-ui'
 import NextLink from 'next/link'
-import { useSession } from 'next-auth/client'
+import { signIn, useSession } from 'next-auth/client'
 import Container from './container'
 import Logo from './logo'
 
@@ -29,13 +29,30 @@ const HomeNav: FC<{ links?: { name: string; link: string }[] }> = ({ links }) =>
                 : null}
 
               <Pane paddingX={majorScale(3)}>
-                <NextLink href={session ? '/profile' : '/signin'}>
-                  <a>
-                    <Button appearance="primary" fontSize="16px">
-                      {session ? 'Course admin' : 'Sign up'}
-                    </Button>
-                  </a>
-                </NextLink>
+                {!session && (
+                  <>
+                    <button onClick={signIn}>Sign In</button>
+                  </>
+                )}
+
+                {session && (
+                  <>
+                    <NextLink href={'/learning'}>
+                      <a>
+                        <Button appearance="primary" fontSize="16px">
+                          {'My learning'}
+                        </Button>
+                      </a>
+                    </NextLink>{' '}
+                    <NextLink href={'/admin'}>
+                      <a>
+                        <Button appearance="primary" fontSize="16px">
+                          {'Courses admin'}
+                        </Button>
+                      </a>
+                    </NextLink>
+                  </>
+                )}
               </Pane>
             </Pane>
           </Pane>
