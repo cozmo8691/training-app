@@ -1,6 +1,5 @@
 import React, { FC } from 'react'
 import Link from 'next/link'
-import { useRouter } from 'next/router'
 
 import { getSession, useSession, signIn, signOut } from 'next-auth/client'
 import { Container, Modal, Jumbotron, Row, Card, Button } from 'react-bootstrap'
@@ -9,6 +8,8 @@ import { connectToDB, admin, course, lesson, screen } from '../../db'
 import { UserSession } from '../../types'
 import Screen from '../../components/Screen'
 import Layout from '../../components/Layout'
+import Course from '../../components/Course'
+import Lesson from '../../components/Lesson'
 
 const Courses: FC<{
   courses?: any[]
@@ -20,7 +21,6 @@ const Courses: FC<{
   breadcrumb: any[]
   isAdmin?: boolean
 }> = ({ courses, courseId, lessons, lessonId, lessonDetails, currentScreen, breadcrumb, isAdmin }) => {
-  const router = useRouter()
   const [session, loading] = useSession()
 
   if (loading) return null
@@ -45,28 +45,8 @@ const Courses: FC<{
 
   return (
     <Layout breadcrumb={breadcrumb} session={session} isAdmin={isAdmin}>
-      {courses && (
-        <ul>
-          {courses.map((course) => (
-            <li key={course._id}>
-              <Link href={`/course/${course._id}`}>
-                <a>{course.name}</a>
-              </Link>
-            </li>
-          ))}
-        </ul>
-      )}
-      {lessons && (
-        <ul>
-          {lessons.map((lesson) => (
-            <li key={lesson._id}>
-              <Link href={`/course/${courseId}/${lesson._id}`}>
-                <a>{lesson.name}</a>
-              </Link>
-            </li>
-          ))}
-        </ul>
-      )}
+      {courses && <Course courses={courses} />}
+      {lessons && <Lesson lessons={lessons} courseId={courseId} />}
       {lessonDetails && (
         <>
           <h1>{lessonDetails.name}</h1>
@@ -89,7 +69,7 @@ export async function getServerSideProps(context) {
   const adminRecord = await admin.getAdmin(db, session.user.id)
   const isAdmin = adminRecord.length > 0
 
-  const props: any = { session, isAdmin, lessons: [], breadcrumb: [] }
+  const props: any = { session, isAdmin, breadcrumb: [] }
   const [courseId, lessonId, currentScreen = 0] = context.params.id || []
   const breadcrumb = [{ text: 'Home', link: '/' }]
   const courseLink = { text: 'Courses', link: '/course' }
