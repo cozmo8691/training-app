@@ -5,7 +5,7 @@ import { Breadcrumb } from 'react-bootstrap'
 
 import styles from './Navigation.module.css'
 
-const Navigation: FC<{ breadcrumb: { text: string; link?: string }[] }> = ({ breadcrumb }) => (
+const Navigation: FC<{ breadcrumb: { text: string; link?: string }[] }> = ({ breadcrumb = [] }) => (
   <Breadcrumb as="nav" className={styles.breadcrumb}>
     {breadcrumb.map((link, i) => (
       <>
@@ -15,7 +15,7 @@ const Navigation: FC<{ breadcrumb: { text: string; link?: string }[] }> = ({ bre
             {link.text}
           </Link>
         ) : (
-          <p>{link.text}</p>
+          <p key={link.text}>{link.text}</p>
         )}
       </>
     ))}

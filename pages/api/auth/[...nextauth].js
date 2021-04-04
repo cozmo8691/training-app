@@ -1,6 +1,6 @@
 import NextAuth from 'next-auth'
 import Providers from 'next-auth/providers'
-import { connectToDB, course, lesson, screen } from '../../../db'
+import { connectToDB, course, lesson, screen, admin } from '../../../db'
 
 export default (req, res) =>
   NextAuth(req, res, {
@@ -32,47 +32,15 @@ export default (req, res) =>
     ],
 
     database: process.env.DATABASE_URL,
-    // pages: {
-    //   signIn: '/signin',
-    // },
+    pages: {
+      signOut: '/',
+    },
     callbacks: {
       async session(session, user) {
         session.user.id = user.id
         return session
       },
       async jwt(tokenPayload, user, account, profile, isNewUser) {
-        const { db } = await connectToDB()
-
-        if (isNewUser) {
-          const defaultCourse = await course.createCourse(db, {
-            name: 'Default course',
-            createdBy: `${user.id}`,
-          })
-          const defaultLesson = await lesson.createLesson(db, {
-            name: 'Getting Started',
-            course: defaultCourse._id,
-            createdBy: `${user.id}`,
-          })
-          await screen.createScreen(db, {
-            name: 'Start Here',
-            lesson: defaultLesson._id,
-            createdBy: `${user.id}`,
-            content: {
-              time: 1556098174501,
-              blocks: [
-                {
-                  type: 'header',
-                  data: {
-                    text: 'Some default content',
-                    level: 2,
-                  },
-                },
-              ],
-              version: '2.12.4',
-            },
-          })
-        }
-
         if (tokenPayload && user) {
           return { ...tokenPayload, id: `${user.id}` }
         }

@@ -10,7 +10,7 @@
 .header {
   /* background: teal; */
   height: 100px;
-  display: flex;
+  /* display: flex; */
 }
 
 .main {
@@ -28,4 +28,12 @@
   color: teal;
   font-weight: 300;
   margin: 1rem;
+}
+
+.user {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  font-size: 0.9rem;
+  cursor: pointer;
 }

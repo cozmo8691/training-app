@@ -1,13 +1,14 @@
 import React, { FC, useState } from 'react'
 import Link from 'next/link'
-import { getSession, useSession } from 'next-auth/client'
-import { Breadcrumb, Container, Row, Card, Button } from 'react-bootstrap'
+import { useRouter } from 'next/router'
 
-import { connectToDB, course, lesson, screen } from '../../db'
-import { UserSession } from '../../types'
-import Screen from '../../components/Screen'
-import Layout from '../../components/Layout'
-import Navigation from '../../components/Navigation'
+import { getSession, useSession, signIn, signOut } from 'next-auth/client'
+import { Container, Modal, Jumbotron, Row, Card, Button } from 'react-bootstrap'
+
+import { connectToDB, admin, course, lesson, screen } from '../db'
+import { UserSession } from '../types'
+import Screen from '../components/Screen'
+import Layout from '../components/Layout'
 
 const Courses: FC<{
   courses?: any[]
@@ -17,16 +18,47 @@ const Courses: FC<{
   lessonDetails?: any
   currentScreen?: number
   breadcrumb: any[]
-}> = ({ courses, courseId, lessons, lessonId, lessonDetails, currentScreen, breadcrumb }) => {
+  isAdmin?: boolean
+  isHome?: boolean
+}> = ({ courses, courseId, lessons, lessonId, lessonDetails, currentScreen, breadcrumb, isAdmin, isHome }) => {
+  const router = useRouter()
   const [session, loading] = useSession()
 
-  if (lessonDetails) {
-    console.log(lessonDetails)
+  if (loading) return null
+
+  if (!session && !loading) {
+    return (
+      <Modal.Dialog>
+        <Modal.Header>
+          <Modal.Title>Your session has expired</Modal.Title>
+        </Modal.Header>
+        <Modal.Footer>
+          <Button variant="primary" onClick={() => signIn()}>
+            Sign in to continue
+          </Button>
+        </Modal.Footer>
+      </Modal.Dialog>
+    )
   }
 
+  console.log(session)
+  console.log(isAdmin)
+
   return (
-    <Layout breadcrumb={breadcrumb}>
-      {/* <User user={session.user} /> */}
+    <Layout breadcrumb={breadcrumb} session={session} isAdmin={isAdmin}>
+      {isHome && (
+        <>
+          <Jumbotron>
+            <h1>A beautiful training portal base for your whole organisation.</h1>
+          </Jumbotron>
+          <Container fluid className="homeButtons">
+            <Link href={`/course/`}>
+              <Button variant="primary">View my courses</Button>
+            </Link>
+          </Container>
+        </>
+      )}
+
       {courses && (
         <ul>
           {courses.map((course) => (
@@ -66,19 +98,34 @@ export async function getServerSideProps(context) {
     return { props: {} }
   }
 
-  const props: any = { session, lessons: [] }
   const { db } = await connectToDB()
-  const [courseId, lessonId, currentScreen = 0] = context.params.id || []
+  console.log(session.user.id)
+  const adminRecord = await admin.getAdmin(db, session.user.id)
+  const isAdmin = adminRecord.length > 0
+
+  const props: any = { session, isAdmin, lessons: [], breadcrumb: [] }
+  const [, courseId, lessonId, currentScreen = 0] = context.params.id || []
   const breadcrumb = [{ text: 'Home', link: '/' }]
   const courseLink = { text: 'Courses', link: '/course' }
 
+  if (!context.params.id) {
+    return {
+      props: {
+        ...props,
+        isHome: true,
+        breadcrumb: [{ text: 'Home' }],
+      },
+    }
+  }
+
   if (lessonId) {
-    // get lesson and screens
+    // get lesson and screensafd
     const screens = await screen.getScreensByLesson(db, lessonId)
     const [lessonDetails] = await lesson.getLessonById(db, lessonId)
     const [courseDetails] = await course.getCourseById(db, courseId)
     return {
       props: {
+        ...props,
         courseId,
         courseDetails,
         lessonId,
@@ -102,6 +149,7 @@ export async function getServerSideProps(context) {
     const courses = await course.getCourses(db)
     return {
       props: {
+        ...props,
         courses,
         breadcrumb: [...breadcrumb, { text: 'Courses' }],
       },
@@ -115,6 +163,7 @@ export async function getServerSideProps(context) {
 
     return {
       props: {
+        ...props,
         courseId,
         lessons,
         breadcrumb: [...breadcrumb, courseLink, { text: courseDetails.name }],
