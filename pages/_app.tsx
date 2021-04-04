@@ -1,14 +1,28 @@
-// fixes a bug for next-auth and mongodb atlas somehow
-// https://github.com/nextauthjs/next-auth/issues/833
+import { Grommet, grommet as grommetTheme } from 'grommet'
 import 'reflect-metadata'
-import React from 'react'
 import { Provider } from 'next-auth/client'
+
 import '../styles/globals.css'
+
+const theme = {
+  global: {
+    font: {
+      family: 'Roboto',
+      size: '18px',
+      height: '20px',
+    },
+    colors: {
+      brand: '#47B881',
+    },
+  },
+}
 
 function MyApp({ Component, pageProps }) {
   return (
     <Provider session={pageProps.session}>
-      <Component {...pageProps} />
+      <Grommet theme={theme}>
+        <Component {...pageProps} />
+      </Grommet>
     </Provider>
   )
 }

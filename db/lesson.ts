@@ -12,12 +12,20 @@ export const createLesson = async (db: Db, lesson: { createdBy: string; name: st
     .then(({ ops }) => ops[0])
 }
 
-// todo: orgId
 export const getLessons = async (db: Db, courseId: string) => {
   return db
     .collection('lessons')
     .find({
       course: courseId,
+    })
+    .toArray()
+}
+
+export const getLessonById = async (db: Db, lessonId: string) => {
+  return db
+    .collection('lessons')
+    .find({
+      _id: lessonId,
     })
     .toArray()
 }

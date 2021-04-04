@@ -1,106 +1,72 @@
 import React, { FC, useState } from 'react'
-import { Pane, Dialog, majorScale } from 'evergreen-ui'
-import { useRouter } from 'next/router'
+import Link from 'next/link'
 import { getSession, useSession } from 'next-auth/client'
-import Logo from '../../components/logo'
-import LessonList from '../../components/LessonList'
-import NewLessonButton from '../../components/newLessonButton'
-import User from '../../components/user'
-import LessonPane from '../../components/lessonPane'
-import ScreenPane from '../../components/screenPane'
-import NewLessonDialog from '../../components/newLessonDialog'
-import { connectToDB, lesson, screen } from '../../db'
-import { UserSession } from '../../types'
+import { Anchor, Box, Heading, Paragraph } from 'grommet'
 
-const Course: FC<{
+import { connectToDB, course, lesson, screen } from '../../db'
+import { UserSession } from '../../types'
+import Screen from '../../components/Screen'
+import Layout from '../../components/Layout'
+
+const Courses: FC<{
+  courses?: any[]
   courseId?: string
   lessons?: any[]
-  activeLesson?: any
-  activeScreen?: any
-  activeScreens?: any[]
-}> = ({ courseId, lessons, activeScreen, activeLesson, activeScreens }) => {
-  const router = useRouter()
-  const [newLessonIsShown, setIsShown] = useState(false)
+  lessonId?: string
+  lessonDetails?: any
+  currentScreen?: number
+  breadcrumb: any[]
+}> = ({ courses, courseId, lessons, lessonId, lessonDetails, currentScreen, breadcrumb }) => {
   const [session, loading] = useSession()
-  const [allLessons, setLessons] = useState(lessons || [])
 
-  const handleNewLesson = async (name: string) => {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_HOST}/api/lesson`, {
-      method: 'POST',
-      body: JSON.stringify({ name, course: courseId }),
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    })
-
-    const { data } = await res.json()
-    setLessons((state) => [...state, data])
-  }
-
-  const Page = () => {
-    if (activeScreen) {
-      return <ScreenPane lesson={activeLesson} screen={activeScreen} courseId={courseId} />
-    }
-
-    if (activeLesson) {
-      return <LessonPane lesson={activeLesson} screens={activeScreens} courseId={courseId} />
-    }
-
-    return null
-  }
-
-  if (!session && !loading) {
-    return (
-      <Dialog
-        isShown
-        title="Session expired"
-        confirmLabel="Ok"
-        hasCancel={false}
-        hasClose={false}
-        shouldCloseOnOverlayClick={false}
-        shouldCloseOnEscapePress={false}
-        onConfirm={() => router.push('/signin')}
-      >
-        Sign in to continue
-      </Dialog>
-    )
+  if (lessonDetails) {
+    console.log(lessonDetails)
   }
 
   return (
-    <Pane position="relative">
-      <Pane width={300} position="absolute" top={0} left={0} background="tint2" height="100vh" borderRight>
-        <Pane padding={majorScale(2)} display="flex" alignItems="center" justifyContent="space-between">
-          <Logo />
-          <NewLessonButton onClick={() => setIsShown(true)} />
-        </Pane>
-        <Pane>
-          <LessonList lessons={allLessons} courseId={courseId} />
-        </Pane>
-      </Pane>
-      <Pane marginLeft={300} width="calc(100vw - 300px)" height="100vh" overflowY="auto" position="relative">
-        <User user={session.user} />
-        <Page />
-      </Pane>
-      <NewLessonDialog close={() => setIsShown(false)} isShown={newLessonIsShown} onNewLesson={handleNewLesson} />
-    </Pane>
+    <Layout>
+      {/* <User user={session.user} /> */}
+      <nav>
+        {breadcrumb.map((link, i) => (
+          <>
+            {i > 0 && ' | '}
+            <Link key={link.text} href={link.link}>
+              <Anchor>{link.text}</Anchor>
+            </Link>
+          </>
+        ))}
+      </nav>
+      {courses && (
+        <ul>
+          {courses.map((course) => (
+            <li key={course._id}>
+              <Link href={`/course/${course._id}`}>
+                <a>{course.name}</a>
+              </Link>
+            </li>
+          ))}
+        </ul>
+      )}
+      {lessons && (
+        <ul>
+          {lessons.map((lesson) => (
+            <li key={lesson._id}>
+              <Link href={`/course/${courseId}/${lesson._id}`}>
+                <a>{lesson.name}</a>
+              </Link>
+            </li>
+          ))}
+        </ul>
+      )}
+      {lessonDetails && (
+        <>
+          <h1>{lessonDetails.name}</h1>
+          <Screen lessonDetails={lessonDetails} currentScreen={currentScreen} />
+        </>
+      )}
+    </Layout>
   )
 }
-
-Course.defaultProps = {
-  lessons: [],
-}
-
-/**
- * Catch all handler. Must handle all different page
- * states.
- * 1. Lessons/courseId - lessons for a course
- * 2. Lessons/courseId/lessonId - lesson selected
- * 3. Lessons/courseId/lessonId/screenId - screen selected - editing screen
- *
- * An unauth user should not be able to access this page.
- *
- * @param context
- */
 
 export async function getServerSideProps(context) {
   const session: { user: UserSession } = await getSession(context)
@@ -111,39 +77,57 @@ export async function getServerSideProps(context) {
 
   const props: any = { session, lessons: [] }
   const { db } = await connectToDB()
-  console.log('context.params.id:', context.params.id)
+  const [courseId, lessonId, currentScreen = 0] = context.params.id || []
+  const breadcrumb = [{ text: 'Home', link: '/' }]
+  const courseLink = { text: 'Courses', link: '/course' }
 
-  if (context.params.id) {
-    // all lessons for this course param
-    const courseId = context.params.id[0]
+  if (lessonId) {
+    // get lesson and screens
+    const screens = await screen.getScreensByLesson(db, lessonId)
+    const [lessonDetails] = await lesson.getLessonById(db, lessonId)
+    const [courseDetails] = await course.getCourseById(db, courseId)
+    return {
+      props: {
+        courseId,
+        courseDetails,
+        lessonId,
+        currentScreen,
+        breadcrumb: [...breadcrumb, courseLink, { text: courseDetails.name, link: `/course/${courseId}` }],
+        lessonDetails: {
+          ...lessonDetails,
+          screens,
+        },
+      },
+    }
+  }
+
+  if (!courseId) {
+    // just get courses
+    const courses = await course.getCourses(db)
+    return {
+      props: {
+        courses,
+        breadcrumb,
+      },
+    }
+  }
+
+  if (courseId) {
+    // all lessons for this course
     const lessons = await lesson.getLessons(db, courseId)
-    props.lessons = lessons
-    props.courseId = courseId
 
-    // const activeLesson = lessons.find((c) => c._id === context.params.id[0])
-    // const activeScreens = await screen.getScreensByLesson(db, activeLesson._id)
-    // props.activeLesson = activeLesson
-    // props.activeScreens = activeScreens
-    const activeLessonId = context.params.id[1]
-
-    if (activeLessonId) {
-      const activeLesson = lessons.find((lesson) => lesson._id === activeLessonId)
-
-      const activeScreen = await screen.getScreensByLesson(db, activeLesson._id)
-      props.activeLesson = activeLesson
-      props.activeScreens = activeScreen
-    }
-
-    const activeScreenId = context.params.id[2]
-
-    if (activeScreenId) {
-      props.activeScreen = await screen.getOneScreen(db, activeScreenId)
+    return {
+      props: {
+        courseId,
+        lessons,
+        breadcrumb: [...breadcrumb, courseLink],
+      },
     }
   }
 
-  return {
-    props,
-  }
+  // return {
+  //   props,
+  // }
 }
 
-export default Course
+export default Courses

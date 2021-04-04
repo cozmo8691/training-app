@@ -16,3 +16,12 @@ export const createCourse = async (db: Db, course: { createdBy: string; name: st
 export const getCourses = async (db: Db) => {
   return db.collection('courses').find().toArray()
 }
+
+export const getCourseById = async (db: Db, courseId: string) => {
+  return db
+    .collection('courses')
+    .find({
+      _id: courseId,
+    })
+    .toArray()
+}
