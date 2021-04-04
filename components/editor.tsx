@@ -15,8 +15,8 @@ import SimpleImage from '@editorjs/simple-image'
 import Table from '@editorjs/table'
 import Warning from '@editorjs/warning'
 import { useThrottleCallback } from '@react-hook/throttle'
-import { Icon, majorScale, Pane, Spinner, Text, TickIcon } from 'evergreen-ui'
 import React, { FC, useEffect, useRef, useState } from 'react'
+import { Container, Spinner, Row, Card, Button } from 'react-bootstrap'
 
 const saveEditor = async (screenId: string, data: any) => {
   await fetch(`${process.env.NEXT_PUBLIC_API_HOST}/api/screen/${screenId}`, {
@@ -95,27 +95,15 @@ const Editor: FC<{ screenId: string; content: any }> = ({ content, screenId }) =
   }, [save, content])
 
   return (
-    <Pane width="100%" position="relative">
+    <Container>
       <div id="editorjs" style={{ width: '100%' }} />
       {saving || doneSaving ? (
-        <Pane
-          position="fixed"
-          top={220}
-          right={20}
-          display="flex"
-          alignItems="center"
-          justifyContent="center"
-          elevation={1}
-          zIndex={9999}
-          background="white"
-          padding={majorScale(1)}
-          borderRadius={4}
-        >
-          <Pane marginRight={majorScale(1)}>{saving ? <Spinner size={16} /> : <Icon icon={TickIcon} />}</Pane>
-          <Text>{saving ? '...auto saving' : 'saved'}</Text>
-        </Pane>
+        <Container>
+          <Container>{saving ? <Spinner animation="border" role="status" /> : <p>done</p>}</Container>
+          <p>{saving ? '...auto saving' : 'saved'}</p>
+        </Container>
       ) : null}
-    </Pane>
+    </Container>
   )
 }
 

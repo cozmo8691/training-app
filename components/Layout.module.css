@@ -1,0 +1,25 @@
+.globalContainer {
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 100vh;
+}
+
+.header {
+  background: teal;
+  height: 100px;
+  display: flex;
+}
+
+.main {
+  background: #ddd;
+  flex: 1;
+  padding: 2rem;
+}
+
+.footer {
+  background: teal;
+  display: flex;
+}

@@ -1,23 +1,29 @@
 import { FC } from 'react'
 import Link from 'next/link'
 
-import { Box, Footer, Header, Heading, Main, Paragraph, Text } from 'grommet'
+import { Col, Container, Row, Card, Button } from 'react-bootstrap'
+import Navigation from './Navigation'
 
-const Layout: FC<{ children: any }> = ({ children }) => {
+import styles from './Layout.module.css'
+
+const Layout: FC<{ breadcrumb: any[]; children: any }> = ({ breadcrumb, children }) => {
   return (
-    <Box margin="none" pad="none">
-      <Header background="brand" margin="none" pad="medium">
-        <Link href={`/`}>
-          <Heading style={{ fontWeight: 300, color: 'white' }}>Uptrain.</Heading>
-        </Link>
-      </Header>
-      <Main pad="large" height={{ min: '400px' }}>
-        {children}
-      </Main>
-      <Footer background="brand" pad="xlarge">
-        <Text>Copyright</Text>
-      </Footer>
-    </Box>
+    <Container fluid className={styles.globalContainer}>
+      <Container fluid className={styles.header}>
+        <Row>
+          <Col>
+            <Link href={`/`}>
+              <h1 style={{ fontWeight: 300, color: 'white' }}>Uptrain.</h1>
+            </Link>
+          </Col>
+        </Row>
+      </Container>
+      <Navigation breadcrumb={breadcrumb} />
+      <main className={styles.main}>{children}</main>
+      <Container fluid className={styles.footer}>
+        <p>Copyright</p>
+      </Container>
+    </Container>
   )
 }
 

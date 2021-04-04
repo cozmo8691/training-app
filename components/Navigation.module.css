@@ -1,0 +1,9 @@
+.breadcrumb,
+.breadcrumb > ol {
+  margin: 0;
+  border-radius: 0;
+}
+
+.breadcrumb > ol > p {
+  font-weight: 600;
+}

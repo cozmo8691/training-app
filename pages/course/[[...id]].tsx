@@ -1,12 +1,13 @@
 import React, { FC, useState } from 'react'
 import Link from 'next/link'
 import { getSession, useSession } from 'next-auth/client'
-import { Anchor, Box, Heading, Paragraph } from 'grommet'
+import { Breadcrumb, Container, Row, Card, Button } from 'react-bootstrap'
 
 import { connectToDB, course, lesson, screen } from '../../db'
 import { UserSession } from '../../types'
 import Screen from '../../components/Screen'
 import Layout from '../../components/Layout'
+import Navigation from '../../components/Navigation'
 
 const Courses: FC<{
   courses?: any[]
@@ -24,18 +25,8 @@ const Courses: FC<{
   }
 
   return (
-    <Layout>
+    <Layout breadcrumb={breadcrumb}>
       {/* <User user={session.user} /> */}
-      <nav>
-        {breadcrumb.map((link, i) => (
-          <>
-            {i > 0 && ' | '}
-            <Link key={link.text} href={link.link}>
-              <Anchor>{link.text}</Anchor>
-            </Link>
-          </>
-        ))}
-      </nav>
       {courses && (
         <ul>
           {courses.map((course) => (
@@ -92,7 +83,12 @@ export async function getServerSideProps(context) {
         courseDetails,
         lessonId,
         currentScreen,
-        breadcrumb: [...breadcrumb, courseLink, { text: courseDetails.name, link: `/course/${courseId}` }],
+        breadcrumb: [
+          ...breadcrumb,
+          courseLink,
+          { text: courseDetails.name, link: `/course/${courseId}` },
+          { text: lessonDetails.name },
+        ],
         lessonDetails: {
           ...lessonDetails,
           screens,
@@ -107,7 +103,7 @@ export async function getServerSideProps(context) {
     return {
       props: {
         courses,
-        breadcrumb,
+        breadcrumb: [...breadcrumb, { text: 'Courses' }],
       },
     }
   }
@@ -115,19 +111,16 @@ export async function getServerSideProps(context) {
   if (courseId) {
     // all lessons for this course
     const lessons = await lesson.getLessons(db, courseId)
+    const [courseDetails] = await course.getCourseById(db, courseId)
 
     return {
       props: {
         courseId,
         lessons,
-        breadcrumb: [...breadcrumb, courseLink],
+        breadcrumb: [...breadcrumb, courseLink, { text: courseDetails.name }],
       },
     }
   }
-
-  // return {
-  //   props,
-  // }
 }
 
 export default Courses

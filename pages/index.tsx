@@ -1,13 +1,12 @@
 import React, { FC } from 'react'
 import Link from 'next/link'
-import { Box, Heading, Paragraph } from 'grommet'
+import { Container, Row, Card, Button } from 'react-bootstrap'
 import { home } from '../content'
 import Layout from '../components/Layout'
 
 const Home: FC<{ content: { hero: any; features: any[] } }> = ({ content }) => {
   return (
-    <Layout>
-      <Heading>Home</Heading>
+    <Layout breadcrumb={[{ text: 'Home' }]}>
       <Link href={`/course/`}>
         <a>Courses</a>
       </Link>
