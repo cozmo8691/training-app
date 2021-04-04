@@ -8,8 +8,8 @@
 }
 
 .header {
-  /* background: teal; */
-  height: 100px;
+  background: #222;
+  height: 40px;
   /* display: flex; */
 }
 
@@ -20,20 +20,26 @@
 }
 
 .footer {
-  background: teal;
+  background: #ccc;
   display: flex;
 }
 
 .logo {
-  color: teal;
+  color: #ccc;
   font-weight: 300;
-  margin: 1rem;
+  margin-top: 0.2rem;
+  font-size: 1.5rem;
 }
 
 .user {
   display: flex;
   flex-direction: row;
   justify-content: flex-end;
-  font-size: 0.9rem;
+  font-size: 0.7rem;
+  color: #ccc;
+}
+
+.logout {
   cursor: pointer;
+  margin: 0 5px;
 }

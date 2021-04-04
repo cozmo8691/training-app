@@ -1,14 +1,14 @@
-import React, { FC, useState } from 'react'
+import React, { FC } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 
 import { getSession, useSession, signIn, signOut } from 'next-auth/client'
 import { Container, Modal, Jumbotron, Row, Card, Button } from 'react-bootstrap'
 
-import { connectToDB, admin, course, lesson, screen } from '../db'
-import { UserSession } from '../types'
-import Screen from '../components/Screen'
-import Layout from '../components/Layout'
+import { connectToDB, admin, course, lesson, screen } from '../../db'
+import { UserSession } from '../../types'
+import Screen from '../../components/Screen'
+import Layout from '../../components/Layout'
 
 const Courses: FC<{
   courses?: any[]
@@ -19,8 +19,7 @@ const Courses: FC<{
   currentScreen?: number
   breadcrumb: any[]
   isAdmin?: boolean
-  isHome?: boolean
-}> = ({ courses, courseId, lessons, lessonId, lessonDetails, currentScreen, breadcrumb, isAdmin, isHome }) => {
+}> = ({ courses, courseId, lessons, lessonId, lessonDetails, currentScreen, breadcrumb, isAdmin }) => {
   const router = useRouter()
   const [session, loading] = useSession()
 
@@ -46,19 +45,6 @@ const Courses: FC<{
 
   return (
     <Layout breadcrumb={breadcrumb} session={session} isAdmin={isAdmin}>
-      {isHome && (
-        <>
-          <Jumbotron>
-            <h1>A beautiful training portal base for your whole organisation.</h1>
-          </Jumbotron>
-          <Container fluid className="homeButtons">
-            <Link href={`/course/`}>
-              <Button variant="primary">View my courses</Button>
-            </Link>
-          </Container>
-        </>
-      )}
-
       {courses && (
         <ul>
           {courses.map((course) => (
@@ -93,30 +79,20 @@ const Courses: FC<{
 
 export async function getServerSideProps(context) {
   const session: { user: UserSession } = await getSession(context)
-  // not signed in
+
   if (!session || !session.user) {
     return { props: {} }
   }
 
   const { db } = await connectToDB()
-  console.log(session.user.id)
+
   const adminRecord = await admin.getAdmin(db, session.user.id)
   const isAdmin = adminRecord.length > 0
 
   const props: any = { session, isAdmin, lessons: [], breadcrumb: [] }
-  const [, courseId, lessonId, currentScreen = 0] = context.params.id || []
+  const [courseId, lessonId, currentScreen = 0] = context.params.id || []
   const breadcrumb = [{ text: 'Home', link: '/' }]
   const courseLink = { text: 'Courses', link: '/course' }
-
-  if (!context.params.id) {
-    return {
-      props: {
-        ...props,
-        isHome: true,
-        breadcrumb: [{ text: 'Home' }],
-      },
-    }
-  }
 
   if (lessonId) {
     // get lesson and screensafd

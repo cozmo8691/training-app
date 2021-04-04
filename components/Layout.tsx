@@ -23,9 +23,14 @@ const Layout: FC<{ breadcrumb: any[]; children: any; session: any; isAdmin }> = 
             </Link>
           </Col>
           <Col>
-            <p className={styles.user} onClick={() => signOut()}>
-              {session.user.email} {isAdmin && 'Admin'}
-            </p>
+            {session && (
+              <p className={styles.user}>
+                <span>{session.user.email}</span>
+                <span className={styles.logout} onClick={() => signOut()}>
+                  logout
+                </span>
+              </p>
+            )}
           </Col>
         </Row>
       </Container>
