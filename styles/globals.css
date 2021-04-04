@@ -22,3 +22,9 @@ a {
   /* border: 1px solid red; */
   margin: 0 10px;
 }
+
+.homeButtons {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+}

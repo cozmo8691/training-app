@@ -1,15 +1,20 @@
 import React, { FC } from 'react'
 import Link from 'next/link'
-import { Container, Row, Card, Button } from 'react-bootstrap'
+import { Container, Button, Jumbotron } from 'react-bootstrap'
 import { home } from '../content'
 import Layout from '../components/Layout'
 
 const Home: FC<{ content: { hero: any; features: any[] } }> = ({ content }) => {
   return (
     <Layout breadcrumb={[{ text: 'Home' }]}>
-      <Link href={`/course/`}>
-        <a>Courses</a>
-      </Link>
+      <Jumbotron>
+        <h1>{content.hero.title}</h1>
+      </Jumbotron>
+      <Container fluid className="homeButtons">
+        <Link href={`/course/`}>
+          <Button variant="primary">View my courses</Button>
+        </Link>
+      </Container>
     </Layout>
   )
 }

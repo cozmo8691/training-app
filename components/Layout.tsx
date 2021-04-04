@@ -13,7 +13,7 @@ const Layout: FC<{ breadcrumb: any[]; children: any }> = ({ breadcrumb, children
         <Row>
           <Col>
             <Link href={`/`}>
-              <h1 style={{ fontWeight: 300, color: 'white' }}>Uptrain.</h1>
+              <h1 className={styles.logo}>Uptrain.</h1>
             </Link>
           </Col>
         </Row>

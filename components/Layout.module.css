@@ -8,13 +8,13 @@
 }
 
 .header {
-  background: teal;
+  /* background: teal; */
   height: 100px;
   display: flex;
 }
 
 .main {
-  background: #ddd;
+  background: #fff;
   flex: 1;
   padding: 2rem;
 }
@@ -22,4 +22,10 @@
 .footer {
   background: teal;
   display: flex;
+}
+
+.logo {
+  color: teal;
+  font-weight: 300;
+  margin: 1rem;
 }
