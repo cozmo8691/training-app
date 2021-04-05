@@ -15,12 +15,8 @@ const Lesson = ({ lessons, courseId }) => {
         'Content-Type': 'application/json',
       },
     })
-
-    console.log(res)
-
     const { data } = await res.json()
-    console.log('data', data)
-    // update local state
+
     setLessons((state) => [...state, data])
     setIsShown(false)
   }
@@ -28,8 +24,6 @@ const Lesson = ({ lessons, courseId }) => {
   const handleChange = ({ target: { value } }) => {
     setName(value)
   }
-
-  console.log('render lesson', name)
 
   return (
     <>

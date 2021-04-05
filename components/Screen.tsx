@@ -17,8 +17,12 @@ const Screen: FC<{ lessonDetails: any; currentScreen: number }> = ({ lessonDetai
     return { __html: markup }
   }
 
+  if (screens.length === 0) {
+    return null
+  }
+
   let html = null
-  if (screens[currentScreen].content) {
+  if (screens[currentScreen]?.content) {
     html = edjsParser.parse(screens[currentScreen].content)
   }
 

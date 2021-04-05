@@ -1,8 +1,6 @@
 import React, { FC } from 'react'
-import Link from 'next/link'
-
-import { getSession, useSession, signIn, signOut } from 'next-auth/client'
-import { Container, Modal, Jumbotron, Row, Card, Button } from 'react-bootstrap'
+import { getSession, useSession, signIn } from 'next-auth/client'
+import { Modal, Button } from 'react-bootstrap'
 
 import { connectToDB, admin, course, lesson, screen } from '../../db'
 import { UserSession } from '../../types'
@@ -27,7 +25,7 @@ const Courses: FC<{
 
   if (!session && !loading) {
     return (
-      <Modal.Dialog>
+      <Modal show>
         <Modal.Header>
           <Modal.Title>Your session has expired</Modal.Title>
         </Modal.Header>
@@ -36,12 +34,9 @@ const Courses: FC<{
             Sign in to continue
           </Button>
         </Modal.Footer>
-      </Modal.Dialog>
+      </Modal>
     )
   }
-
-  console.log(session)
-  console.log(isAdmin)
 
   return (
     <Layout breadcrumb={breadcrumb} session={session} isAdmin={isAdmin}>
@@ -75,7 +70,7 @@ export async function getServerSideProps(context) {
   const courseLink = { text: 'Courses', link: '/course' }
 
   if (lessonId) {
-    // get lesson and screensafd
+    // get lesson and screens
     const screens = await screen.getScreensByLesson(db, lessonId)
     const [lessonDetails] = await lesson.getLessonById(db, lessonId)
     const [courseDetails] = await course.getCourseById(db, courseId)
@@ -101,7 +96,7 @@ export async function getServerSideProps(context) {
   }
 
   if (!courseId) {
-    // just get courses
+    // courses main page - just get courses
     const courses = await course.getCourses(db)
     return {
       props: {

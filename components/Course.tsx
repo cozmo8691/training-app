@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import Link from 'next/link'
-import { Container, Form, Modal, Button } from 'react-bootstrap'
+import { Form, Modal, Button } from 'react-bootstrap'
 
 const Course = ({ courses }) => {
   const [allCourses, setCourses] = useState(courses || [])
@@ -16,11 +16,7 @@ const Course = ({ courses }) => {
       },
     })
 
-    console.log(res)
-
     const { data } = await res.json()
-    console.log('data', data)
-    // update local state
     setCourses((state) => [...state, data])
     setIsShown(false)
   }
@@ -28,8 +24,6 @@ const Course = ({ courses }) => {
   const handleChange = ({ target: { value } }) => {
     setName(value)
   }
-
-  console.log('render', name)
 
   return (
     <>
