@@ -4,10 +4,7 @@ import { Modal, Button } from 'react-bootstrap'
 
 import { connectToDB, admin, course, lesson, screen } from '../../db'
 import { UserSession } from '../../types'
-import Screen from '../../components/Screen'
-import Layout from '../../components/Layout'
-import Course from '../../components/Course'
-import Lesson from '../../components/Lesson'
+import { Course, Layout, Lesson, Screen } from '../../components'
 
 const Courses: FC<{
   courses?: any[]
@@ -39,9 +36,9 @@ const Courses: FC<{
   }
 
   return (
-    <Layout breadcrumb={breadcrumb} session={session} isAdmin={isAdmin}>
-      {courses && <Course courses={courses} />}
-      {lessons && <Lesson lessons={lessons} courseId={courseId} />}
+    <Layout breadcrumb={breadcrumb} session={session}>
+      {courses && <Course courses={courses} isAdmin={isAdmin} />}
+      {lessons && <Lesson lessons={lessons} courseId={courseId} isAdmin={isAdmin} />}
       {lessonDetails && (
         <>
           <h1>{lessonDetails.name}</h1>
@@ -62,6 +59,7 @@ export async function getServerSideProps(context) {
   const { db } = await connectToDB()
 
   const adminRecord = await admin.getAdmin(db, session.user.id)
+  console.log(adminRecord)
   const isAdmin = adminRecord.length > 0
 
   const props: any = { session, isAdmin, breadcrumb: [] }

@@ -1,18 +1,13 @@
 import { FC } from 'react'
 import Link from 'next/link'
-import { getSession, useSession, signIn, signOut } from 'next-auth/client'
+import { signOut } from 'next-auth/client'
 
-import { Col, Container, Row, Card, Button } from 'react-bootstrap'
-import Navigation from './Navigation'
+import { Col, Container, Row } from 'react-bootstrap'
+import { Navigation } from '../'
 
 import styles from './Layout.module.css'
 
-const Layout: FC<{ breadcrumb: any[]; children: any; session: any; isAdmin }> = ({
-  breadcrumb,
-  children,
-  session,
-  isAdmin,
-}) => {
+const Layout: FC<{ breadcrumb: any[]; children: any; session: any }> = ({ breadcrumb, children, session }) => {
   return (
     <Container fluid className={styles.globalContainer}>
       <Container fluid className={styles.header}>

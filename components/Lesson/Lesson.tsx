@@ -2,7 +2,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { Form, Modal, Button } from 'react-bootstrap'
 
-const Lesson = ({ lessons, courseId }) => {
+const Lesson = ({ lessons, courseId, isAdmin }) => {
   const [allLessons, setLessons] = useState(lessons || [])
   const [newLessonIsShown, setIsShown] = useState(false)
   const [name, setName] = useState('')
@@ -37,9 +37,11 @@ const Lesson = ({ lessons, courseId }) => {
         ))}
       </ul>
 
-      <Button variant="primary" onClick={() => setIsShown(true)}>
-        Add new lesson
-      </Button>
+      {isAdmin && (
+        <Button variant="primary" onClick={() => setIsShown(true)}>
+          Add new lesson
+        </Button>
+      )}
 
       <Modal show={newLessonIsShown}>
         <Modal.Header>
