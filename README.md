@@ -1,4 +1,4 @@
-# Production Grade Next.js course
-> by scott moss and frontendmasters
+# Training app
 
-[Curriculum](https://production-grade-nextjs.vercel.app)
+Allow users to create custom training material.
+
