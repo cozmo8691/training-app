@@ -1,5 +1,6 @@
 # Training app
 
-Allow users to create custom training material.
+**Next.js**
 
-Uses Next.js
+Tool for creating custom training materials.
+
